@@ -1,0 +1,9 @@
+iac/.terraform.lock.hcl
+iac/.terraform/environment
+iac/.terraform/providers/registry.terraform.io/hashicorp/azurerm/3.100.0/windows_amd64/terraform-provider-azurerm_v3.100.0_x5.exe
+iac/.terraform/terraform.tfstate
+
+command.txt
+
+
+
