@@ -50,7 +50,7 @@ module "acrpull" {
 // Module for Azure Key Vault
 module "key_vault" {
   source                     = "./modules/azureKeyVault"
-  key_vault_name             = "kvault-${terraform.workspace}-${var.location_code}"
+  key_vault_name             = "kvault${terraform.workspace}${var.location_code}"
   location                   = var.location
   resource_group_name        = module.resource_group.resource_group_name
   soft_delete_retention_days = var.kv_soft_delete_retention_days
