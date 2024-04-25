@@ -56,7 +56,7 @@ variable "docker_image_tag" {
 variable "docker_registry_url" {
   description = "The URL of the Docker registry where Docker images are stored."
   type        = string
-  default     = "acrfibonaccishared.azurecr.io"
+  default     = "https://acrfibonaccishared.azurecr.io"
 }
 
 ## App Service Plan variables ##
