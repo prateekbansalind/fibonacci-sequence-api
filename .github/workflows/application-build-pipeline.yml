@@ -1,0 +1,26 @@
+name: Build and Push Docker
+
+on:
+  push:
+    branches:
+      - main 
+      - release 
+  
+jobs:
+  build-and-push-docker:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check Out Repo
+      uses: actions/checkout@v4
+
+    - name: Log in to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Azure CLI script to login to ACR and push an image
+      run: |
+        az acr login --name acrfibonaccishared
+        docker build -t acrfibonaccishared.azurecr.io/fibonacci:latest .
+        docker push acrfibonaccishared.azurecr.io/fibonacci:latest
