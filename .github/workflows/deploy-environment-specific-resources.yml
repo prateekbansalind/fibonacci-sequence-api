@@ -1,0 +1,98 @@
+name: 'Infrastructure Deployment'
+
+on:
+  push:
+    branches:
+      - '*'  # This allows running on any branch push
+  pull_request:
+    branches:
+      - main
+      - release
+
+env:
+  ARM_CLIENT_ID: ${{ secrets.AZ_TF_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.AZ_TF_CLIENT_SECRET }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_TF_SUB_ID }}
+  ARM_TENANT_ID: ${{ secrets.AZ_TF_TENANT_ID }}
+  ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
+  TENANT_ID: ${{ secrets.TENANT_ID }}
+
+jobs:
+  terraform-plan-dev:
+    name: 'Dev'
+    runs-on: ubuntu-latest
+    container:
+      image: hashicorp/terraform:1.6.6
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize and Plan Terraform
+        run: |
+          cd ./iac
+          terraform init -reconfigure
+          terraform workspace select dev || terraform workspace new dev
+          terraform validate
+          terraform plan -var-file="./env/dev.tfvars" -var "docker_registry_password=$ACR_PASSWORD" -var "tenant_id=$ARM_TENANT_ID" 
+      - name: Terraform Apply
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: terraform apply -var-file="./env/dev.tfvars" -var "docker_registry_password=$ACR_PASSWORD" -var "tenant_id=$TENANT_ID" -auto-approve  
+        working-directory: ./iac
+
+  terraform-plan-test:
+    name: 'Test'
+    needs: terraform-plan-dev
+    runs-on: ubuntu-latest
+    container:
+      image: hashicorp/terraform:1.6.6
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize and Plan Terraform
+        run: |
+          cd ./iac
+          terraform init -reconfigure
+          terraform workspace select test || terraform workspace new test
+          terraform validate
+          terraform plan -var-file="./env/test.tfvars" -var "docker_registry_password=$ACR_PASSWORD" -var "tenant_id=$ARM_TENANT_ID" 
+      - name: Terraform Apply
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: terraform apply -var-file="./env/test.tfvars" -var "docker_registry_password=$ACR_PASSWORD" -var "tenant_id=$TENANT_ID" -auto-approve   
+        working-directory: ./iac
+
+  terraform-plan-stage:
+    name: 'Stage'
+    needs: terraform-plan-test
+    runs-on: ubuntu-latest
+    container:
+      image: hashicorp/terraform:1.6.6
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize and Plan Terraform
+        run: |
+          cd ./iac
+          terraform init -reconfigure
+          terraform workspace select stage || terraform workspace new stage
+          terraform validate
+          terraform plan -var-file="./env/stage.tfvars" -var "docker_registry_password=$ACR_PASSWORD" -var "tenant_id=$ARM_TENANT_ID" 
+      - name: Terraform Apply
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: terraform apply -var-file="./env/stage.tfvars" -var "docker_registry_password=$ACR_PASSWORD" -var "tenant_id=$TENANT_ID" -auto-approve
+        working-directory: ./iac
+
+  terraform-plan-prod:
+    name: 'Prod'
+    needs: terraform-plan-stage
+    runs-on: ubuntu-latest
+    container:
+      image: hashicorp/terraform:1.6.6
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize and Plan Terraform
+        run: |
+          cd ./iac
+          terraform init -reconfigure
+          terraform workspace select prod || terraform workspace new prod
+          terraform validate
+          terraform plan -var-file="./env/prod.tfvars" -var "docker_registry_password=$ACR_PASSWORD" -var "tenant_id=$ARM_TENANT_ID" 
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/release'
+        run: terraform apply -var-file="./env/prod.tfvars" -var "docker_registry_password=$ACR_PASSWORD" -var "tenant_id=$TENANT_ID" -auto-approve
+        working-directory: ./iac
