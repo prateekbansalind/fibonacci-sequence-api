@@ -27,7 +27,7 @@ jobs:
           terraform validate
           terraform plan -var-file="./env/dev.tfvars" -var "docker_registry_password=$ACR_PASSWORD" -var "tenant_id=$ARM_TENANT_ID" 
       - name: Terraform Apply
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main'
         run: terraform apply -var-file="./env/dev.tfvars" -var "docker_registry_password=$ACR_PASSWORD" -var "tenant_id=$TENANT_ID" -auto-approve  
         working-directory: ./iac
 
@@ -47,7 +47,7 @@ jobs:
           terraform validate
           terraform plan -var-file="./env/test.tfvars" -var "docker_registry_password=$ACR_PASSWORD" -var "tenant_id=$ARM_TENANT_ID" 
       - name: Terraform Apply
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main'
         run: terraform apply -var-file="./env/test.tfvars" -var "docker_registry_password=$ACR_PASSWORD" -var "tenant_id=$TENANT_ID" -auto-approve   
         working-directory: ./iac
 
@@ -67,7 +67,7 @@ jobs:
           terraform validate
           terraform plan -var-file="./env/stage.tfvars" -var "docker_registry_password=$ACR_PASSWORD" -var "tenant_id=$ARM_TENANT_ID" 
       - name: Terraform Apply
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main'
         run: terraform apply -var-file="./env/stage.tfvars" -var "docker_registry_password=$ACR_PASSWORD" -var "tenant_id=$TENANT_ID" -auto-approve
         working-directory: ./iac
 
