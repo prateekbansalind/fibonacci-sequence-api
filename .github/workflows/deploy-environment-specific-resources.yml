@@ -1,13 +1,7 @@
 name: 'Infrastructure Deployment'
 
 on:
-  push:
-    branches:
-      - '*'  # This allows running on any branch push
-  pull_request:
-    branches:
-      - main
-      - release
+  workflow_dispatch:
 
 env:
   ARM_CLIENT_ID: ${{ secrets.AZ_TF_CLIENT_ID }}
