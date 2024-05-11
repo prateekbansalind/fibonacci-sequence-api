@@ -46,12 +46,12 @@ We have implemented a robust approach to manage the Terraform state to ensure sa
 
 This setup is crucial for maintaining a stable and reliable infrastructure, where changes are controlled, and state management is secured against unintended alterations.
 
-![Alt text](screenshots\terraform_state.png)
+![Alt text](screenshots/terraform_state.png)
 
 
 1. **Deploy Shared Resources**: Run the script `sharedResourceDeployment.sh` locally to deploy resources like ACR that is shared across environments.
 
-![Alt text](screenshots\shared-env.png)
+![Alt text](screenshots/shared-env.png)
 
 2. **Branching and Deployment Strategy**
 
@@ -72,11 +72,11 @@ This setup helps maintain control and staging of changes across different enviro
     >
     > When I pushed my test code into the public repo, which I shared the link with you, then I realized environments are not available for private repositories. I was out of time and decided not to make any changes to the code.
 
-![Alt text](screenshots\dev_env.png)
-![Alt text](screenshots\test-env.png)
-![Alt text](screenshots\stage.png)
-![Alt text](screenshots\prod.png)
-![Alt text](screenshots\pipeline.png)
+![Alt text](screenshots/dev_env.png)
+![Alt text](screenshots/test-env.png)
+![Alt text](screenshots/stage.png)
+![Alt text](screenshots/prod.png)
+![Alt text](screenshots/pipeline.png)
 
 
 3. **Configure GitHub Secrets**:
@@ -90,8 +90,8 @@ This setup helps maintain control and staging of changes across different enviro
 
 5. **Domain and SSL Configuration (manual steps)** :
    - If using a custom domain, configure DNS records (A and TXT) on Cloudflare.
-   ![Alt text](screenshots\custom_domain_add.png)
-   ![Alt text](screenshots\cloudfareDNS.png)
+   ![Alt text](screenshots/custom_domain_add.png)
+   ![Alt text](screenshots/cloudfareDNS.png)
    ![Alt text](screenshots/cert_add.png)
    ![Alt text](screenshots/cert_add.png)
 
